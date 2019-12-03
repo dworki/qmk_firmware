@@ -1,0 +1,1 @@
+openocd -f openocd.cfg -c "program .build/handwired_bluepill_bluepill70_default.hex reset exit"

@@ -1,0 +1,1 @@
+make handwired/bluepill/bluepill70:default && ./load
