@@ -26,7 +26,8 @@
 // #define RSPC_KEY KC_9
 
 // The pin connected to the data pin of the LEDs
-#define RGB_DI_PIN A7
-// The number of LEDs connected
-#define DRIVER_LED_TOTAL 6
-#define RGB_MATRIX_KEYPRESSES
+#define RGB_DI_PIN      A7
+#define RGBLED_NUM      48
+#define RGB_LIMIT_VAL   100
+#define RGBLIGHT_SLEEP
+#define RGBLIGHT_ANIMATIONS
