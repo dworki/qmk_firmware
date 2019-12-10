@@ -59,57 +59,79 @@ const uint16_t keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KEYLOCK, DM_REC1, DM_REC2, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_VOLU, \
     DM_RSTP, DM_PLY1, DM_PLY2, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,      KC_INSERT,   KC_VOLD, \
     KC_TRNS,  KC_TRNS, KC_TRNS, KC_TRNS, MYRST,   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,      KC_TRNS,    KC_MUTE, \
-    KC_CAPS,   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,             KC_TRNS,     KC_TRNS, \
+    KC_CAPS,   KC_TRNS, KC_TRNS, KC_TRNS, KC_FIND, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,             KC_TRNS,     KC_TRNS, \
     KC_TRNS,  KC_MNXT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_NLCK, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,     KC_TRNS,     RGB_VAI, KC_POWER, \
     KC_TRNS, KC_TRNS, KC_TRNS,                            KC_TRNS,                     KC_TRNS,   KC_TRNS,    KC_TRNS,   RGB_TOG, RGB_VAD, RGB_MOD ),
 };
 
+void setrgb_range(uint8_t r, uint8_t g, uint8_t b, uint8_t start, uint8_t end) {
+    if (start < 0 || start >= end || end > RGBLED_NUM) {
+        return;
+    }
 
-// tap_code(KC_VOLU);
+    for (uint8_t i = start; i < end; i++) {
+        led[i].r = r;
+        led[i].g = g;
+        led[i].b = b;
+    }
+}
+
+void sethsv_range(uint8_t hue, uint8_t sat, uint8_t val, uint8_t start, uint8_t end) {
+    LED_TYPE tmp_led;
+    sethsv(hue, sat, val, &tmp_led);
+    setrgb_range(tmp_led.r, tmp_led.g, tmp_led.b, start, end);
+}
+
 
 bool keys_locked = false;
 bool recording = false;
 layer_state_t lState;
 uint8_t usb_leds;
 
+#define C_RED       0,255,255
+#define C_PRIMARY   128,255,val
+#define C_KEYPAD    85,255,val
+#define C_FUNC      212,255,val
+#define C_OFF       0,0,0
+
 void update_backlight(void) {
-  uint8_t max = rgblight_get_val();
+  uint8_t val = rgblight_get_val();
 
   if (keys_locked) {
-    rgblight_sethsv_range(0, 0, 0,0,45);
-    rgblight_sethsv_range(0,255,255,40,41);
+    sethsv_range(C_OFF,0,45);
+    sethsv_range(C_RED,40,41);
+    rgblight_set();
     return;
   }
 
   uint8_t l = get_highest_layer(lState);
   if (l == _FUNC) {
-    rgblight_sethsv_range(212, 255, max,0,45);
+    sethsv_range(C_FUNC,0,45);
   } else {
-    rgblight_sethsv_range(127, 255, max,0,45);
+    sethsv_range(C_PRIMARY,0,45);
   }
   if (layer_state_is(_KEYPAD)) {
-    rgblight_sethsv_range(85, 255, max,15,30);
+    sethsv_range(C_KEYPAD,15,30);
 
   }
 
   if (recording) {
-    rgblight_sethsv_range(0,255,255,38,42);
+    sethsv_range(C_RED,38,42);
   }
-  // switch (get_highest_layer(lState)) {
-  //   case _FUNC:
-  //     break;
-  //   case _KEYPAD:
-  //     rgblight_sethsv_range(85, 255, max,15,30);
-  //     break;
-  //   //default: //  for any other layers, or the default layer
-  // }
 
   // CAPSLOCK
   if (usb_leds & (1<<USB_LED_CAPS_LOCK)) {
-    rgblight_sethsv_range(0,255,255,41,45);
+    sethsv_range(C_RED,41,45);
+  }
+  // CAPSLOCK
+  if (layer_state_is(_KEYPAD) && (usb_leds & (1<<USB_LED_NUM_LOCK))) {
+    sethsv_range(C_RED,25,27);
   }
 
+  rgblight_set();
+
 }
+// tap_code(KC_VOLU);
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (keycode == KEYLOCK && record->event.pressed) {
@@ -179,27 +201,27 @@ void dynamic_macro_record_end_user(int8_t direction) {
 void keyboard_post_init_user(void) {
   lState = 1;
   wait_ms(1);
-  rgblight_sethsv_noeeprom_red();
   uint8_t val = rgblight_get_val();
+  sethsv_range(C_RED, 0,45);
+  rgblight_set();
   for (int8_t i = 40; i>=0; i-=5){
     wait_ms(100);
-    rgblight_sethsv_range(127,255,val,i,i+5);
+    sethsv_range(C_PRIMARY,i,i+5);
+    rgblight_set();
   }
-  wait_ms(1);
-  rgblight_sethsv_noeeprom(127, 255, val);
   wait_ms(1);
   update_backlight();
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
   lState = state;
-  printf("layer: %d\n", state);
+  //printf("layer: %d\n", state);
   return state;
 }
 
 void led_set(uint8_t usb_led){
   usb_leds = usb_led;
-  printf("led: %d\n", usb_leds);
+  //printf("led: %d\n", usb_leds);
   update_backlight();
 }
 
