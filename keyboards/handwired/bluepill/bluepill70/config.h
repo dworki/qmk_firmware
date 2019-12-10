@@ -26,8 +26,12 @@
 // #define RSPC_KEY KC_9
 
 // The pin connected to the data pin of the LEDs
-#define RGB_DI_PIN      A7
-#define RGBLED_NUM      48
-#define RGB_LIMIT_VAL   100
+#define RGB_DI_PIN          A7
+#define RGBLED_NUM          45
+#define RGBLIGHT_LIMIT_VAL  120
 #define RGBLIGHT_SLEEP
-#define RGBLIGHT_ANIMATIONS
+//#define RGBLIGHT_ANIMATIONS
+#define SPACE_CADET_MODIFIER_CARRYOVER
+#define TAPPING_TERM 200
+#define DYNAMIC_MACRO_NO_NESTING
+#define DYNAMIC_MACRO_SIZE  256

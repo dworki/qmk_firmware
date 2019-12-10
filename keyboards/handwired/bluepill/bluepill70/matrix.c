@@ -87,10 +87,10 @@ void matrix_init(void)
     matrix_debouncing[i] = 0;
   }
   //debug
-  debug_matrix = true;
-  LED_ON();
-  wait_ms(500);
-  LED_OFF();
+  // debug_matrix = true;
+  // LED_ON();
+  // wait_ms(500);
+  // LED_OFF();
 
   matrix_init_quantum();
 }
