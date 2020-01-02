@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define _NORMAL 0
 #define _KEYPAD 1
 #define _FUNC 2
+#define _EMOJI 3
 
 // Defines the keycodes used by our macros in process_record_user
 enum custom_keycodes {
@@ -34,8 +35,34 @@ enum custom_keycodes {
   SFT_ESC,
   KEYLOCK,
   MYRST,
+  EMOJI,
 };
 
+// const qk_ucis_symbol_t ucis_symbol_table[] = UCIS_TABLE(
+//     UCIS_SYM("poop", 0x1F4A9), // 💩
+//     UCIS_SYM("rofl", 0x1F923), // 🤣
+//     UCIS_SYM("kiss", 0x1F619)  // 😙
+//     UCIS_SYM("happy", 0x1F642)  // 🙂
+//     UCIS_SYM("sad", 0x1F641)  // 🙁
+//     UCIS_SYM("wink", 0x1F641)  // 🙁
+//
+//
+// );
+
+enum unicode_names {
+    BANG,
+    BIO,
+    SNEK,
+    GRIN,
+};
+
+const uint32_t PROGMEM unicode_map[] = {
+    [BANG]  = 0x203D,  // ‽
+    [BIO] = 0x2623,  // ☣
+    [SNEK]  = 0x1F40D, // 🐍
+    [GRIN] = 0x1F600, // 😀
+
+};
 
 // Highly Modified by Xydane
 const uint16_t keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -58,10 +85,11 @@ const uint16_t keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_FUNC] = LAYOUT_seventy_ansi(
     KEYLOCK, DM_REC1, DM_REC2, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_VOLU, \
     DM_RSTP, DM_PLY1, DM_PLY2, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,      KC_INSERT,   KC_VOLD, \
-    KC_TRNS,  KC_TRNS, KC_TRNS, KC_TRNS, MYRST,   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,      KC_TRNS,    KC_MUTE, \
-    KC_CAPS,   KC_TRNS, KC_TRNS, KC_TRNS, KC_FIND, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,             KC_TRNS,     KC_TRNS, \
-    KC_TRNS,  KC_MNXT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_NLCK, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,     KC_TRNS,     RGB_VAI, KC_POWER, \
+    KC_TRNS,  X(BANG), X(SNEK),KC_TRNS, MYRST,   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,      KC_TRNS,    KC_MUTE, \
+    KC_CAPS,   X(GRIN), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,             KC_TRNS,     KC_TRNS, \
+    KC_TRNS,  KC_MNXT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, X(BIO), KC_NLCK, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,     KC_TRNS,     RGB_VAI, KC_POWER, \
     KC_TRNS, KC_TRNS, KC_TRNS,                            KC_TRNS,                     KC_TRNS,   KC_TRNS,    KC_TRNS,   RGB_TOG, RGB_VAD, RGB_MOD ),
+
 };
 
 void setrgb_range(uint8_t r, uint8_t g, uint8_t b, uint8_t start, uint8_t end) {
@@ -123,7 +151,7 @@ void update_backlight(void) {
   if (usb_leds & (1<<USB_LED_CAPS_LOCK)) {
     sethsv_range(C_RED,41,45);
   }
-  // CAPSLOCK
+  // NUMLOCK
   if (layer_state_is(_KEYPAD) && (usb_leds & (1<<USB_LED_NUM_LOCK))) {
     sethsv_range(C_RED,25,27);
   }
@@ -148,6 +176,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           NVIC_SystemReset();
       }
       break;
+    // case EMOJI:
+    //   if (record->event.pressed) {
+    //     //qk_ucis_start();
+    //     return false;
+    //   }
+    //   break;
+
     // case QMKBEST:
     //   if (record->event.pressed) {
     //     // when keycode QMKBEST is pressed
@@ -211,6 +246,7 @@ void keyboard_post_init_user(void) {
   }
   wait_ms(1);
   update_backlight();
+
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
@@ -225,6 +261,9 @@ void led_set(uint8_t usb_led){
   update_backlight();
 }
 
+void eeconfig_init_user(void) {
+    set_unicode_input_mode(UC_LNX);
+}
 
 // void suspend_power_down_user(void) {
 //   rgb_matrix_set_suspend_state(true);
