@@ -8,3 +8,8 @@ CUSTOM_MATRIX = yes 	# Custom matrix file
 MOUSEKEY_ENABLE = no
 
 DEFAULT_FOLDER = handwired/bluepill/bluepill70
+
+DYNAMIC_MACRO_ENABLE = yes
+RGBLIGHT_ENABLE = yes
+UNICODEMAP_ENABLE = yes
+#UCIS_ENABLE = yes
