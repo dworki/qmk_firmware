@@ -36,6 +36,7 @@ enum custom_keycodes {
   KEYLOCK,
   MYRST,
   EMOJI,
+  INS_UP,
 };
 
 // const qk_ucis_symbol_t ucis_symbol_table[] = UCIS_TABLE(
@@ -71,7 +72,7 @@ const uint16_t keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_GRAVE,KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,       KC_BSPC,     KC_PGDOWN, \
     KC_TAB,   KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC,      KC_BSLASH,  KC_DELETE, \
     KC_LCTL,   KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,             KC_ENT,      KC_HOME, \
-    KC_LSPO,  KC_NUBS, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,     KC_RSPC,      KC_UP,  KC_END, \
+    KC_LSPO, INS_UP, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,     KC_RSPC,      KC_UP,  KC_END, \
     KC_LCPO, KC_LGUI, KC_LALT,                            KC_SPC,                      KC_RALT,   MO(2),      KC_RCPC,   KC_LEFT, KC_DOWN, KC_RIGHT ),
 
   [_KEYPAD] = LAYOUT_seventy_ansi(
@@ -83,7 +84,7 @@ const uint16_t keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRNS, KC_TRNS, KC_TRNS,                            KC_TRNS,                     KC_TRNS,   KC_TRNS,    KC_TRNS,   KC_TRNS, KC_TRNS, KC_TRNS ),
 
   [_FUNC] = LAYOUT_seventy_ansi(
-    KEYLOCK, DM_REC1, DM_REC2, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_VOLU, \
+    KEYLOCK, DM_REC1, DM_REC2, KC_TRNS, KC_MPRV, KC_MPLY, KC_MNXT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_VOLU, \
     DM_RSTP, DM_PLY1, DM_PLY2, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,      KC_INSERT,   KC_VOLD, \
     KC_TRNS,  X(BANG), X(SNEK),KC_TRNS, MYRST,   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,      KC_TRNS,    KC_MUTE, \
     KC_CAPS,   X(GRIN), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,             KC_TRNS,     KC_TRNS, \
@@ -176,21 +177,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           NVIC_SystemReset();
       }
       break;
-    // case EMOJI:
-    //   if (record->event.pressed) {
-    //     //qk_ucis_start();
-    //     return false;
-    //   }
-    //   break;
 
-    // case QMKBEST:
-    //   if (record->event.pressed) {
-    //     // when keycode QMKBEST is pressed
-    //     SEND_STRING("QMK is the best thing ever!");
+    case INS_UP:
+      if (record->event.pressed) {
+        // insert new line above the current on
+        //SEND_STRING(SS_TAP(KC_UP) SS_TAP(KC_END) SS_TAP(KC_ENT)"");
+        SEND_STRING(SS_TAP(X_UP)SS_TAP(X_END)SS_TAP(X_ENTER));
     //   } else {
     //     // when keycode QMKBEST is released
-    //   }
-    //   break;
+      }
+      break;
     // case QMKURL:
     //   if (record->event.pressed) {
     //     // when keycode QMKURL is pressed
