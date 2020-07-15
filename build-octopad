@@ -1,0 +1,1 @@
+make handwired/octopad/octopad13:default && ./load-octopad

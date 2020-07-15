@@ -1,0 +1,5 @@
+[{t:"#009904\n#000000",a:5,f2:1,d:true},"<i class='fa fa-circle'></i>\nNUM CONNCT",{x:0.75,t:"#800000\n#000000",d:true},"<i class='fa fa-circle'></i>\nSCROL ERROR",{x:0.75,t:"#005cb0\n#000000",d:true},"<i class='fa fa-circle'></i>\nCAPS SHIFT"],
+[{y:0.25,t:"#000000",a:7},"PRN PWR",{x:0.75},"LIGHT",{x:0.75},"SHIFT"],
+[{y:0.5},"PLA","PET","COOL",{x:0.5},"UNLD"],
+[{y:0.5,x:1},"Y+",{x:1.5},"Z+"],
+["X-","Y-","X+",{x:0.5},"Z-"]
